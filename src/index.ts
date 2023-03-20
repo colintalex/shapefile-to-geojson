@@ -204,7 +204,7 @@ class Parser {
 							str = charString.join("");
 						// }
 						if (this.#configuration?.trim !== false) {
-							str = str.trim().split("").filter(char => char.codePointAt(0)).join("");
+							str = str.split("").filter(char => char.codePointAt(0)).join("").trim();
 						}
 						const number = parseFloat(str);
 						if (isNaN(number)) {
