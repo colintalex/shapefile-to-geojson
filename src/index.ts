@@ -1,10 +1,9 @@
 import { promises as fs } from "fs";
 import { Feature } from "geojson";
 import * as path from "path";
+import { readFileSync } from 'fs';
 var prj2epsg = require("prj2epsg");
 var epsg = require("epsg");
-var fs_p = require("fs").promises;
-
 // TODO: fix this to be more specific
 type GeoJSON = any;
 
@@ -233,28 +232,28 @@ class Parser {
   }
 
 	#geoJSON() {
-    let wkt_crs = fs_p.readFileSync('/Users/colinalexander/Downloads/shape2/test.prj', 'utf8');
-    let crs = prj2epsg.fromPRJ(wkt_crs)
+    let wkt_crs = readFileSync('/Users/colinalexander/Downloads/shape2/test.prj', 'utf8');
+    let crs = prj2epsg.fromPRJ(wkt_crs);
     let crs_str = `EPSG:${crs}`
-		const geojson: any = {
+    const geojson: any = {
       "crs": {
-      "type": "name",
-      "properties": {
-        "name": `urn:ogc:def:crs:EPSG::${crs_str}`
+        "type": "name",
+        "properties": {
+          "name": `urn:ogc:def:crs:EPSG::${crs_str}`
         }
       },
-			"type": "FeatureCollection",
-			"features": []
-		};
-		for (let i = 0; i < Math.min(this.#features.length, this.#propertiesArray.length); i++) {
-			geojson.features.push({
-				"type": "Feature",
-				"geometry": this.#features[i],
-				"properties": this.#propertiesArray[i]
-			});
-		}
-		return geojson;
-	}
+      "type": "FeatureCollection",
+      "features": []
+    };
+    for (let i = 0; i < Math.min(this.#features.length, this.#propertiesArray.length); i++) {
+      geojson.features.push({
+        "type": "Feature",
+        "geometry": this.#features[i],
+        "properties": this.#propertiesArray[i]
+      });
+    }
+    return geojson;
+  }
 
 	parse(): GeoJSON {
 		this.#parseShp();
