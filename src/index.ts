@@ -270,7 +270,7 @@ class Parser {
  * @param configuration The configuration settings to use.
  * @returns A promise containing the GeoJSON object.
  */
-export const parseFiles = async (shpFile: string | Buffer, dbfFile: string | Buffer, prjFile: String, configuration?: Configuration): Promise<GeoJSON> => {
+export const parseFiles = async (shpFile: string | Buffer, dbfFile: string | Buffer, prjFile: string | String, configuration?: Configuration): Promise<GeoJSON> => {
 	if (typeof shpFile === "string") {
 		shpFile = await fs.readFile(shpFile);
 	}
