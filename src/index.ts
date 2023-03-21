@@ -235,10 +235,9 @@ class Parser {
 
 	#geoJSON() {
     // let wkt_crs = readFileSync('/Users/colinalexander/Downloads/shape2/test.prj', 'utf8');
-    console.log(this.#prj)
-    console.log(this.#prj)
-    let wkt_str = this.#prj.toString();
-    let crs = prj2epsg.fromPRJ(wkt_str);
+    console.log(this.#prj);
+    console.log(this.#prj);
+    let crs = prj2epsg.fromPRJ(this.#prj);
     let crs_str = `urn:ogc:def:crs:EPSG::${crs}`
     const geojson: any = {
       "crs": {
@@ -275,7 +274,7 @@ class Parser {
  * @param configuration The configuration settings to use.
  * @returns A promise containing the GeoJSON object.
  */
-export const parseFiles = async (shpFile: string | Buffer, dbfFile: string | Buffer, prjFile: string, configuration?: Configuration): Promise<GeoJSON> => {
+export const parseFiles = async (shpFile: string | Buffer, dbfFile: string | Buffer, prjFile: string | string, configuration?: Configuration): Promise<GeoJSON> => {
 	if (typeof shpFile === "string") {
 		shpFile = await fs.readFile(shpFile);
 	}
