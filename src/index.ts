@@ -1,8 +1,9 @@
 import { promises as fs } from "fs";
 import { Feature } from "geojson";
 import * as path from "path";
-import { prj2epsg } from "prj2epsg";
-import { epsg } from "epsg";
+var prj2epsg = require("prj2epsg");
+var epsg = require("epsg");
+var fs_p = require("fs").promises;
 
 // TODO: fix this to be more specific
 type GeoJSON = any;
@@ -51,9 +52,10 @@ class Parser {
 	#features: any[] = [];
 	#propertiesArray: any[] = [];
 
-	constructor(shp: Buffer, dbf: Buffer, configuration?: Configuration) {
+	constructor(shp: Buffer, dbf: Buffer, prj: Buffer, configuration?: Configuration) {
 		this.#shp = shp;
 		this.#dbf = dbf;
+		this.#prj = prj;
 		this.#configuration = configuration;
 	}
 
@@ -231,7 +233,7 @@ class Parser {
   }
 
 	#geoJSON() {
-    let wkt_crs = fs.readFileSync('/Users/colinalexander/Downloads/shape2/test.prj', 'utf8');
+    let wkt_crs = fs_p.readFileSync('/Users/colinalexander/Downloads/shape2/test.prj', 'utf8');
     let crs = prj2epsg.fromPRJ(wkt_crs)
     let crs_str = `EPSG:${crs}`
 		const geojson: any = {
