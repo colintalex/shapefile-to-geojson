@@ -46,7 +46,7 @@ export const parseFolder = async (folder: string, configuration?: Configuration)
 class Parser {
 	#shp: Buffer;
 	#dbf: Buffer;
-	#prj: Buffer;
+	#prj: String;
 	#configuration?: Configuration;
 	#features: any[] = [];
 	#propertiesArray: any[] = [];
@@ -54,7 +54,7 @@ class Parser {
 	constructor(shp: Buffer, dbf: Buffer, prj: Buffer, configuration?: Configuration) {
 		this.#shp = shp;
 		this.#dbf = dbf;
-		this.#prj = prj;
+		this.#prj = prj.toString();
 		this.#configuration = configuration;
 	}
 
@@ -232,7 +232,8 @@ class Parser {
   }
 
 	#geoJSON() {
-    let crs = prj2epsg.fromPRJ(this.#prj.toString());
+    // let wkt_crs = readFileSync('/Users/colinalexander/Downloads/shape2/test.prj', 'utf8');
+    let crs = prj2epsg.fromPRJ(this.#prj);
     let crs_str = `urn:ogc:def:crs:EPSG::${crs}`
     const geojson: any = {
       "crs": {
@@ -257,7 +258,6 @@ class Parser {
 	parse(): GeoJSON {
 		this.#parseShp();
 		this.#parseDbf();
-		// this.#parsePrj(); // get CRS if available, if n/a default to wgs84
 
 		return this.#geoJSON();
 	}
