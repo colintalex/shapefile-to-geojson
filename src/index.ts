@@ -1,6 +1,8 @@
 import { promises as fs } from "fs";
 import { Feature } from "geojson";
 import * as path from "path";
+import { prj2epsg } from "prj2epsg";
+import { epsg } from "epsg";
 
 // TODO: fix this to be more specific
 type GeoJSON = any;
@@ -23,6 +25,7 @@ export const parseFolder = async (folder: string, configuration?: Configuration)
 	const files = await fs.readdir(folder);
 	const shpFiles = files.filter((file) => file.endsWith(".shp"));
 	const dbfFiles = files.filter((file) => file.endsWith(".dbf"));
+	const prjFiles = files.filter((file) => file.endsWith(".prj"));
 
 	if (shpFiles.length > 1) {
 		throw new Error("Multiple shapefiles found.");
@@ -37,12 +40,13 @@ export const parseFolder = async (folder: string, configuration?: Configuration)
 		throw new Error("No dbf files found.");
 	}
 
-	return parseFiles(path.join(folder, shpFiles[0]), path.join(folder, dbfFiles[0]), configuration);
+	return parseFiles(path.join(folder, shpFiles[0]), path.join(folder, dbfFiles[0]), path.join(folder, prjFiles[0]), configuration);
 };
 
 class Parser {
 	#shp: Buffer;
 	#dbf: Buffer;
+	#prj: Buffer;
 	#configuration?: Configuration;
 	#features: any[] = [];
 	#propertiesArray: any[] = [];
@@ -222,8 +226,21 @@ class Parser {
 		this.#propertiesArray = propertiesArray;
 	}
 
+  #parsePrj() {
+
+  }
+
 	#geoJSON() {
+    let wkt_crs = fs.readFileSync('/Users/colinalexander/Downloads/shape2/test.prj', 'utf8');
+    let crs = prj2epsg.fromPRJ(wkt_crs)
+    let crs_str = `EPSG:${crs}`
 		const geojson: any = {
+      "crs": {
+      "type": "name",
+      "properties": {
+        "name": `urn:ogc:def:crs:EPSG::${crs_str}`
+        }
+      },
 			"type": "FeatureCollection",
 			"features": []
 		};
@@ -240,6 +257,7 @@ class Parser {
 	parse(): GeoJSON {
 		this.#parseShp();
 		this.#parseDbf();
+		// this.#parsePrj(); // get CRS if available, if n/a default to wgs84
 
 		return this.#geoJSON();
 	}
@@ -252,13 +270,16 @@ class Parser {
  * @param configuration The configuration settings to use.
  * @returns A promise containing the GeoJSON object.
  */
-export const parseFiles = async (shpFile: string | Buffer, dbfFile: string | Buffer, configuration?: Configuration): Promise<GeoJSON> => {
+export const parseFiles = async (shpFile: string | Buffer, dbfFile: string | Buffer, prjFile: string | Buffer, configuration?: Configuration): Promise<GeoJSON> => {
 	if (typeof shpFile === "string") {
 		shpFile = await fs.readFile(shpFile);
 	}
 	if (typeof dbfFile === "string") {
 		dbfFile = await fs.readFile(dbfFile);
 	}
+	if (typeof prjFile === "string") {
+		prjFile = await fs.readFile(prjFile);
+	}
 
-	return new Parser(shpFile, dbfFile, configuration).parse();
+	return new Parser(shpFile, dbfFile, prjFile, configuration).parse();
 };
