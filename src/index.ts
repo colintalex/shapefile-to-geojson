@@ -234,12 +234,12 @@ class Parser {
 	#geoJSON() {
     let wkt_crs = readFileSync('/Users/colinalexander/Downloads/shape2/test.prj', 'utf8');
     let crs = prj2epsg.fromPRJ(wkt_crs);
-    let crs_str = `EPSG:${crs}`
+    let crs_str = `urn:ogc:def:crs:EPSG::${crs}`
     const geojson: any = {
       "crs": {
         "type": "name",
         "properties": {
-          "name": `urn:ogc:def:crs:EPSG::${crs_str}`
+          "name": `${crs_str}`
         }
       },
       "type": "FeatureCollection",
