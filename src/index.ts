@@ -33,11 +33,17 @@ export const parseFolder = async (folder: string, configuration?: Configuration)
 	if (dbfFiles.length > 1) {
 		throw new Error("Multiple dbf files found.");
 	}
+	if (prjFiles.length > 1) {
+		throw new Error("Multiple prj files found.");
+	}
 	if (shpFiles.length === 0) {
 		throw new Error("No shapefiles found.");
 	}
 	if (dbfFiles.length === 0) {
 		throw new Error("No dbf files found.");
+	}
+	if (prjFiles.length === 0) {
+		throw new Error("No prj files found.");
 	}
 
 	return parseFiles(path.join(folder, shpFiles[0]), path.join(folder, dbfFiles[0]), path.join(folder, prjFiles[0]), configuration);
@@ -46,12 +52,12 @@ export const parseFolder = async (folder: string, configuration?: Configuration)
 class Parser {
 	#shp: Buffer;
 	#dbf: Buffer;
-	#prj: Buffer;
+	#prj: string;
 	#configuration?: Configuration;
 	#features: any[] = [];
 	#propertiesArray: any[] = [];
 
-	constructor(shp: Buffer, dbf: Buffer, prj: Buffer, configuration?: Configuration) {
+	constructor(shp: Buffer, dbf: Buffer, prj: string, configuration?: Configuration) {
 		this.#shp = shp;
 		this.#dbf = dbf;
 		this.#prj = prj;
@@ -227,10 +233,6 @@ class Parser {
 		this.#propertiesArray = propertiesArray;
 	}
 
-  #parsePrj() {
-
-  }
-
 	#geoJSON() {
     // let wkt_crs = readFileSync('/Users/colinalexander/Downloads/shape2/test.prj', 'utf8');
     console.log(this.#prj)
@@ -273,7 +275,7 @@ class Parser {
  * @param configuration The configuration settings to use.
  * @returns A promise containing the GeoJSON object.
  */
-export const parseFiles = async (shpFile: string | Buffer, dbfFile: string | Buffer, prjFile: string | Buffer, configuration?: Configuration): Promise<GeoJSON> => {
+export const parseFiles = async (shpFile: string | Buffer, dbfFile: string | Buffer, prjFile: string, configuration?: Configuration): Promise<GeoJSON> => {
 	if (typeof shpFile === "string") {
 		shpFile = await fs.readFile(shpFile);
 	}
@@ -281,7 +283,7 @@ export const parseFiles = async (shpFile: string | Buffer, dbfFile: string | Buf
 		dbfFile = await fs.readFile(dbfFile);
 	}
 	if (typeof prjFile === "string") {
-		prjFile = await fs.readFile(prjFile);
+		prjFile = await fs.readFile(prjFile, 'utf8');
 	}
 
 	return new Parser(shpFile, dbfFile, prjFile, configuration).parse();
