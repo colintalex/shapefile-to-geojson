@@ -51,7 +51,7 @@ class Parser {
 	#features: any[] = [];
 	#propertiesArray: any[] = [];
 
-	constructor(shp: Buffer, dbf: Buffer, prj: Buffer, configuration?: Configuration) {
+	constructor(shp: Buffer, dbf: Buffer, prj: String, configuration?: Configuration) {
 		this.#shp = shp;
 		this.#dbf = dbf;
 		this.#prj = prj.toString();
@@ -270,7 +270,7 @@ class Parser {
  * @param configuration The configuration settings to use.
  * @returns A promise containing the GeoJSON object.
  */
-export const parseFiles = async (shpFile: string | Buffer, dbfFile: string | Buffer, prjFile: string | Buffer, configuration?: Configuration): Promise<GeoJSON> => {
+export const parseFiles = async (shpFile: string | Buffer, dbfFile: string | Buffer, prjFile: String, configuration?: Configuration): Promise<GeoJSON> => {
 	if (typeof shpFile === "string") {
 		shpFile = await fs.readFile(shpFile);
 	}
@@ -278,7 +278,7 @@ export const parseFiles = async (shpFile: string | Buffer, dbfFile: string | Buf
 		dbfFile = await fs.readFile(dbfFile);
 	}
 	if (typeof prjFile === "string") {
-		prjFile = await fs.readFile(prjFile);
+		prjFile = await fs.readFile(prjFile, 'utf8');
 	}
 
 	return new Parser(shpFile, dbfFile, prjFile, configuration).parse();
