@@ -232,8 +232,7 @@ class Parser {
   }
 
 	#geoJSON() {
-    let wkt_crs = readFileSync('/Users/colinalexander/Downloads/shape2/test.prj', 'utf8');
-    let crs = prj2epsg.fromPRJ(wkt_crs);
+    let crs = prj2epsg.fromPRJ(this.#prj);
     let crs_str = `urn:ogc:def:crs:EPSG::${crs}`
     const geojson: any = {
       "crs": {
@@ -279,7 +278,7 @@ export const parseFiles = async (shpFile: string | Buffer, dbfFile: string | Buf
 		dbfFile = await fs.readFile(dbfFile);
 	}
 	if (typeof prjFile === "string") {
-		prjFile = await fs.readFile(prjFile);
+		prjFile = await fs.readFile(prjFile, 'utf8');
 	}
 
 	return new Parser(shpFile, dbfFile, prjFile, configuration).parse();
