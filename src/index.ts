@@ -233,6 +233,8 @@ class Parser {
 
 	#geoJSON() {
     // let wkt_crs = readFileSync('/Users/colinalexander/Downloads/shape2/test.prj', 'utf8');
+    console.log(this.#prj)
+    console.log(this.#prj)
     let wkt_str = this.#prj.toString();
     let crs = prj2epsg.fromPRJ(wkt_str);
     let crs_str = `urn:ogc:def:crs:EPSG::${crs}`
