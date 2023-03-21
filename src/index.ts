@@ -282,7 +282,7 @@ export const parseFiles = async (shpFile: string | Buffer, dbfFile: string | Buf
 		dbfFile = await fs.readFile(dbfFile);
 	}
 	if (typeof prjFile === "string") {
-		prjFile = await fs.readFile(prjFile, 'utf8');
+		prjFile = readFileSync(prjFile, 'utf8');
 	}
 
 	return new Parser(shpFile, dbfFile, prjFile, configuration).parse();
