@@ -54,7 +54,7 @@ class Parser {
 	constructor(shp: Buffer, dbf: Buffer, prj: String, configuration?: Configuration) {
 		this.#shp = shp;
 		this.#dbf = dbf;
-		this.#prj = prj.toString();
+		this.#prj = prj;
 		this.#configuration = configuration;
 	}
 
