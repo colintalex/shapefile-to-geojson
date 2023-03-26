@@ -43,6 +43,7 @@
   },
   "dependencies": {
     "epsg": "^0.5.0",
-    "prj2epsg": "^1.0.0"
+    "prj2epsg": "^1.0.0",
+    "reproject": "^1.2.7"
   }
 }

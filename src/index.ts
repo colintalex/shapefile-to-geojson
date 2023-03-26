@@ -4,6 +4,7 @@ import * as path from "path";
 import { readFileSync } from 'fs';
 var prj2epsg = require("prj2epsg");
 var epsg = require("epsg");
+var reproject = require("reproject");
 // TODO: fix this to be more specific
 type GeoJSON = any;
 
@@ -235,7 +236,7 @@ class Parser {
 
 	#geoJSON() {
     let wkt_crs = this.#prj ? this.#prj.toString() : 'GEOGCS["GCS_WGS_1984",DATUM["D_WGS_1984",SPHEROID["WGS_1984",6378137.0,298.257223563]],PRIMEM["Greenwich",0.0],UNIT["Degree",0.0174532925199433]]';
-    console.log(this.#prj.toString());
+    console.log(this.#prj);
     let crs = prj2epsg.fromPRJ(wkt_crs);
     let crs_str = `urn:ogc:def:crs:EPSG::${crs}`
     const geojson: any = {
@@ -255,6 +256,7 @@ class Parser {
         "properties": this.#propertiesArray[i]
       });
     }
+
     return geojson;
   }
 
